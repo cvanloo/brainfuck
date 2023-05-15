@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #define CHUNK_SIZE 512
@@ -33,7 +34,7 @@ int main(int argc, char *argv[]) {
     size_t ptr = 0;
 
     char *loops[10];
-    size_t loop_count = 0;
+    int8_t current_loop = -1;
     char *instruction = program;
     while (*instruction != 0) {
         switch (*instruction) {
@@ -51,20 +52,24 @@ int main(int argc, char *argv[]) {
             break;
         case '[':
             if (stack[ptr] == 0) {
-                for (size_t i = 0; i <= loop_count; ++i) {
-                    while (*(++instruction) != ']')
-                        ;
+                size_t top = 1;
+                for (size_t i = 0; i < top; ++i) {
+                    while (*(++instruction) != ']') {
+                        if (*instruction == '[') {
+                            ++top;
+                        }
+                    }
                 }
             } else {
-                ++loop_count;
-                loops[loop_count-1] = instruction;
+                ++current_loop;
+                loops[current_loop] = instruction;
             }
             break;
         case ']':
             if (stack[ptr] != 0) {
-                instruction = loops[loop_count-1];
+                instruction = loops[current_loop];
             } else {
-                --loop_count;
+                --current_loop;
             }
             break;
         case '.':
