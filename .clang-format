@@ -1,4 +1,9 @@
 IndentWidth: 4
+ColumnLimit: 120
 SpacesInLineCommentPrefix:
   Minimum: 0
   Maximum: 1
+#AlignTrailingComments:
+#  Kind: Always
+#  OverEmptyLines: 0
+#AllowShortBlocksOnASingleLine: Always

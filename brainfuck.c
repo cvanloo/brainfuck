@@ -20,14 +20,17 @@ int main(int argc, char *argv[]) {
         char *tmp_program = malloc(CHUNK_SIZE);
         size_t total_read = 0;
         while (1) {
-            ssize_t nb =
-                read(fileno(stdin), tmp_program + total_read, CHUNK_SIZE);
+            ssize_t nb = read(fileno(stdin), tmp_program + total_read, CHUNK_SIZE);
             if (nb == 0)
                 break;
             total_read += nb;
             tmp_program = realloc(tmp_program, total_read + CHUNK_SIZE);
         }
         program = tmp_program;
+
+        if (argc > 1) {
+            input = argv[1];
+        }
     }
 
     char stack[100] = {0};
@@ -76,8 +79,12 @@ int main(int argc, char *argv[]) {
             printf("%c", stack[ptr]);
             break;
         case ',':
-            stack[ptr] = *input;
-            ++input;
+            if (*input == 0) {
+                stack[ptr] = -1;
+            } else {
+                stack[ptr] = *input;
+                ++input;
+            }
             break;
         }
         ++instruction;
