@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #define CHUNK_SIZE 512
+#define STACK_SIZE 100
 #define MAX_LOOPS 10
 
 int main(int argc, char *argv[]) {
@@ -28,8 +29,8 @@ int main(int argc, char *argv[]) {
         if (argc > 1) input = argv[1];
     }
 
-    char stack[100] = {0};
-    size_t ptr = 0;
+    char stack[STACK_SIZE] = {0};
+    char *ptr = stack;
 
     char *loops[MAX_LOOPS];
     int8_t current_loop = -1;
@@ -37,10 +38,10 @@ int main(int argc, char *argv[]) {
     while (*instruction != 0) {
         switch (*instruction) {
         case '+':
-            ++stack[ptr];
+            ++(*ptr);
             break;
         case '-':
-            --stack[ptr];
+            --(*ptr);
             break;
         case '>':
             ++ptr;
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
             --ptr;
             break;
         case '[':
-            if (stack[ptr] == 0) {
+            if (*ptr == 0) {
                 size_t top = 1;
                 for (size_t i = 0; i < top; ++i) {
                     while (*(++instruction) != ']')
@@ -63,7 +64,7 @@ int main(int argc, char *argv[]) {
             }
             break;
         case ']':
-            if (stack[ptr] != 0) {
+            if (*ptr != 0) {
                 instruction = loops[current_loop];
                 // Continue executing after loop start (++instruction after switch end).
             } else {
@@ -71,13 +72,13 @@ int main(int argc, char *argv[]) {
             }
             break;
         case '.':
-            printf("%c", stack[ptr]);
+            printf("%c", *ptr);
             break;
         case ',':
             if (*input == 0) {
-                stack[ptr] = -1;
+                *ptr = -1;
             } else {
-                stack[ptr] = *input;
+                *ptr = *input;
                 ++input;
             }
             break;
