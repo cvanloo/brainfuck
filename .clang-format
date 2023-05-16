@@ -7,3 +7,5 @@ SpacesInLineCommentPrefix:
 #  Kind: Always
 #  OverEmptyLines: 0
 #AllowShortBlocksOnASingleLine: Always
+AllowShortBlocksOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: true
