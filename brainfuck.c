@@ -7,28 +7,22 @@
 #include <unistd.h>
 
 #define CHUNK_SIZE 512
-#define STACK_SIZE 100
+#define REGISTER_COUNT 100
 
-enum Direction { Forward, Backward };
+void preprocess_loops(char *loops[], char *program, size_t program_length) {
+    char *stack[program_length / 2]; // theoretically no more than half of the instructions can be '['
+    char **top = stack;
 
-char *find_match(char *start, char match, enum Direction dir) {
-    char *ip = start;
-    size_t count = 1;
-    while (count) {
-        dir == Forward ? ++ip : --ip;
-        if (*ip == *start) ++count;
-        if (*ip == match) --count;
-    }
-    return ip;
-}
-
-void preprocess_loops(char *loops[], char *program) {
     char *ip = program;
     while (*ip != 0) {
         if (*ip == '[') {
-            loops[ip - program] = find_match(ip, ']', Forward);
+            *top = ip;
+            ++top;
         } else if (*ip == ']') {
-            loops[ip - program] = find_match(ip, '[', Backward);
+            --top;
+            char *jump_start = *top;
+            loops[ip - program] = jump_start;
+            loops[jump_start - program] = ip;
         }
         ++ip;
     }
@@ -55,10 +49,10 @@ int main(int argc, char *argv[]) {
         if (argc > 1) input = argv[1];
     }
 
-    char stack[STACK_SIZE] = {0};
-    char *ptr = stack;
+    char registers[REGISTER_COUNT] = {0};
+    char *ptr = registers;
     char *loops[program_length];
-    preprocess_loops(loops, program);
+    preprocess_loops(loops, program, program_length);
 
     char *ip = program;
     while (*ip != 0) {
