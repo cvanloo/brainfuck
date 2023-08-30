@@ -227,5 +227,8 @@ int main(int argc, char *argv[]) {
 
     assert(fclose(fd) == 0);
 
+    assert(system("as bf.out -o bf.o -g") == 0);
+    assert(system("ld bf.o -o bf") == 0);
+
     return EXIT_SUCCESS;
 }
