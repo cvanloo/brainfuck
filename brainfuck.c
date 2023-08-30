@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     assert(fd > 0);
 
     // r12 = register pointer
-    // r12 = input pointer
+    // r13 = input pointer
     const char *header =
         "    .globl _start"        "\n"
         "    .text"                "\n"
