@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     char *program, *outfile;
     size_t program_length = 0;
 
-    outfile = "bf.out";
+    outfile = "bf";
 
     if (isatty(fileno(stdin))) {
         assert(argc > 1 && "Invalid number of arguments.");
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     int loops[program_length];
     preprocess_loops(loops, program, program_length);
 
-    FILE *fd = fopen(outfile, "w+");
+    FILE *fd = fopen("bf.out", "w+");
     assert(fd > 0);
 
     // r12 = register pointer
@@ -228,7 +228,10 @@ int main(int argc, char *argv[]) {
     assert(fclose(fd) == 0);
 
     assert(system("as bf.out -o bf.o -g") == 0);
-    assert(system("ld bf.o -o bf") == 0);
+    char cmd[100];
+    strcpy(cmd, "ld bf.o -o ");
+    strncat(cmd, outfile, 100-strlen(cmd));
+    assert(system(cmd) == 0);
 
     return EXIT_SUCCESS;
 }
