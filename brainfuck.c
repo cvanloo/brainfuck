@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
             break;
         case ',':
             if (*input == 0) {
-                *ptr = -1;
+                *ptr = -1; // signal EOF
             } else {
                 *ptr = *input;
                 ++input;
