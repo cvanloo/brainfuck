@@ -74,29 +74,10 @@ int main(int argc, char *argv[]) {
         "    movq %rsp, %rbp"      "\n"
         "    subq $100, %rsp"      "\n"
         "    movq %rsp, %r12"      "\n"
-        "    jmp main"             "\n"
         ""                         "\n"
         ;
 
     size_t bn = fwrite(header, strlen(header), 1, fd);
-    assert(bn > 0);
-
-    char *proc_io_in =
-        "get_input:"            "\n"
-        "    movq (%r13), %rax" "\n"
-        "    testb %al, %al"    "\n"
-        "    jz io_empty"       "\n"
-        "    movb %al, (%r12)"  "\n"
-        "    incq %r13"         "\n"
-        "    jmp io_end"        "\n"
-        "io_empty:"             "\n"
-        "    movb $0, (%r12)"   "\n"
-        "io_end:"               "\n"
-        "    ret"               "\n"
-        ""                      "\n"
-        "main:"                 "\n"
-        ;
-    bn = fwrite(proc_io_in, strlen(proc_io_in), 1, fd);
     assert(bn > 0);
 
     char label_conv[10];
@@ -208,7 +189,7 @@ int main(int argc, char *argv[]) {
             assert(bn > 0);
         } break;
         case ',': {
-            char *out = "    call get_input" " # ," "\n";
+            char *out = "    call proc_get_input" " # ," "\n";
             size_t bn = fwrite(out, strlen(out), 1, fd);
             assert(bn > 0);
         } break;
@@ -223,6 +204,23 @@ int main(int argc, char *argv[]) {
         "    syscall"        "\n"
         ;
     bn = fwrite(footer, strlen(footer), 1, fd);
+    assert(bn > 0);
+
+    char *proc_io_in =
+        "proc_get_input:"       "\n"
+        "    movq (%r13), %rax" "\n"
+        "    testb %al, %al"    "\n"
+        "    jz io_empty"       "\n"
+        "    movb %al, (%r12)"  "\n"
+        "    incq %r13"         "\n"
+        "    jmp io_end"        "\n"
+        "io_empty:"             "\n"
+        "    movb $0, (%r12)"   "\n"
+        "io_end:"               "\n"
+        "    ret"               "\n"
+        ""                      "\n"
+        ;
+    bn = fwrite(proc_io_in, strlen(proc_io_in), 1, fd);
     assert(bn > 0);
 
     assert(fclose(fd) == 0);
